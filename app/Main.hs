@@ -14,6 +14,7 @@ data LispVal = Atom String
 main :: IO ()
 main = do
   args <- getArgs
+  putStrLn $ "Parsing " ++ args !! 0
   putStrLn (readExpr $ args !! 0)
 
 symbol :: Parser Char
@@ -22,10 +23,13 @@ symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
 spaces :: Parser ()
 spaces = skipMany1 space
 
+parseEscapeSequence :: Parser Char
+parseEscapeSequence = char '\\' >> oneOf "nr\\t\""     -- oneOf nrt\"
+
 parseString :: Parser LispVal
 parseString = do
   char '"'
-  x <- many $ noneOf "\""
+  x <- many $ noneOf "\"" <|> parseEscapeSequence
   char '"'
   return $ String x
 
