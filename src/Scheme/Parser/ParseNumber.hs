@@ -20,9 +20,15 @@ parseNumber :: Parser LispVal
 parseNumber = (try $ string "0b" >> parseNumberInBase 2)
            <|> (try $ string "0b" >> parseNumberInBase 8)
            <|> (try $ string "0x" >> parseNumberInBase 16)
+           <|> (try $ parseFloat)
            <|> parseNumberInBase 10
 
 toDecimal :: Integer -> String -> Integer
 toDecimal base s = foldl1 ((+) . (* base)) $ map (toInteger . digitToInt) s
 
-
+parseFloat :: Parser LispVal
+parseFloat = do
+  integerPart <- many1 digit
+  char '.'
+  decimalPart <- many1 digit
+  return $ (Float . read) $ integerPart ++ "." ++ decimalPart
