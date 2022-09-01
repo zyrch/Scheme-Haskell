@@ -33,6 +33,7 @@ library
       Scheme.Parser.ParseAtom
       Scheme.Parser.ParseString
       Scheme.Parser.ParseNumber
+      Scheme.Parser.ParseExpr
       Scheme.Parser.LispVal
 
     default-language: Haskell2010
