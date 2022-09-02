@@ -18,7 +18,7 @@ parseNumberInBase base = liftM (Number . toDecimal base) $ (many1 . oneOf) (map 
 
 parseNumber :: Parser LispVal
 parseNumber = (try $ string "0b" >> parseNumberInBase 2)
-           <|> (try $ string "0b" >> parseNumberInBase 8)
+           <|> (try $ string "0o" >> parseNumberInBase 8)
            <|> (try $ string "0x" >> parseNumberInBase 16)
            <|> (try $ parseFloat)
            <|> parseNumberInBase 10
