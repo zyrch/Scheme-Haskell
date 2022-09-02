@@ -5,6 +5,7 @@ import Control.Monad
 import System.Environment
 import Data.Char(digitToInt, ord, intToDigit, toUpper)
 import Scheme.Parser.ParseExpr
+import Scheme.Evaluator
 
 main :: IO ()
 main = do
@@ -15,4 +16,4 @@ main = do
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
                    Left err -> "No Match: " ++ show err
-                   Right val -> "Found Value: " ++ show val 
+                   Right val -> "Found Value evaluations to: " ++ show val

@@ -11,5 +11,4 @@ data LispVal = Atom String
              | Bool Bool
              | Character Char
              | Float Float
-             deriving Show
 
