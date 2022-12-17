@@ -7,7 +7,6 @@ import Text.ParserCombinators.Parsec hiding (spaces)
 import Control.Monad
 import Scheme.Parser.LispVal
 
-
 parseCharacter :: Parser LispVal
 parseCharacter = liftM Character $ string "#\\" >> anyChar
 
