@@ -1,5 +1,5 @@
 module Scheme.Parser.ParseExpr
-( parseExpr
+( parseExpr, readExpr
 ) where
 
 import Text.ParserCombinators.Parsec hiding (spaces)
@@ -37,3 +37,8 @@ parseExpr = parseCharacter
                 x <- try parseList <|> parseDottedList
                 char ')'
                 return x
+
+readExpr :: String -> LispVal
+readExpr input = case parse parseExpr "lisp" input of
+                   Left err -> String $ "No Match: " ++ show err
+                   Right val -> val

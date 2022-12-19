@@ -55,7 +55,25 @@ testSymbols = testGroup "Parsing Atoms"
     , testCase "" $ assertBool "" $ checkEquality (Atom "symbol!") (parse parseExpr "atom" "symbol!")
     ]
 
+testShow = testGroup "Test show instance"
+    [
+      testCase "" $ assertEqual "" "Right ( quote ( 1 3 ( \"this\" \"one\" ) ) )" (show $ parse parseExpr "show list"
+      "'(1 3 (\"this\" \"one\"))")
+    ]
+
+testEval = testGroup "Test Eval"
+    [
+      testCase "" $ assertEqual "" "4" $ (show . eval . readExpr) "(+ 2 2)"
+    , testCase "" $ assertEqual "" "3" $ (show . eval . readExpr) "(- (+ 4 6 3) 3 5 2)"
+    ]
+
+parseTests :: TestTree
+parseTests = testGroup "Parse Tests" [testCharacters, testStrings, testSymbols, testShow]
+
+evalTests :: TestTree
+evalTests = testGroup "Eval Tests" [testEval]
+
 tests :: TestTree
-tests = testGroup "All Tests" [testCharacters, testStrings, testSymbols]
+tests = testGroup "All Tests" [parseTests, evalTests]
 
 main = defaultMain tests

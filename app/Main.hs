@@ -10,12 +10,5 @@ import Scheme.Parser.LispVal
 import Scheme.Evaluator
 
 main :: IO ()
-main = do
-  args <- getArgs
-  putStrLn $ "Parsing " ++ args !! 0
-  putStrLn (readExpr $ args !! 0)
+main = getArgs >>= print . eval . readExpr . head
 
-readExpr :: String -> String
-readExpr input = case parse parseExpr "lisp" input of
-                   Left err -> "No Match: " ++ show err
-                   Right val -> "Found Value evaluations to: " ++ show val
