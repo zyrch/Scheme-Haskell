@@ -4,10 +4,12 @@ module Scheme.Parser.ParseExpr
 
 import Text.ParserCombinators.Parsec hiding (spaces)
 import Control.Monad
+import Control.Monad.Except
 import Scheme.Parser.LispVal
 import Scheme.Parser.ParseString
 import Scheme.Parser.ParseNumber
 import Scheme.Parser.ParseAtom
+import Scheme.LispError
 
 spaces :: Parser ()
 spaces = skipMany1 space
@@ -38,7 +40,7 @@ parseExpr = parseCharacter
                 char ')'
                 return x
 
-readExpr :: String -> LispVal
+readExpr :: String -> ThrowsError LispVal
 readExpr input = case parse parseExpr "lisp" input of
-                   Left err -> String $ "No Match: " ++ show err
-                   Right val -> val
+                   Left err -> throwError $ Parser err
+                   Right val -> return val

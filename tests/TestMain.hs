@@ -63,9 +63,11 @@ testShow = testGroup "Test show instance"
 
 testEval = testGroup "Test Eval"
     [
-      testCase "" $ assertEqual "" "4" $ (show . eval . readExpr) "(+ 2 2)"
-    , testCase "" $ assertEqual "" "3" $ (show . eval . readExpr) "(- (+ 4 6 3) 3 5 2)"
+      testCase "" $ assertEqual "" "Right 4" $ (show (readExpr "(+ 2 2)" >>= eval))
+    , testCase "" $ assertEqual "" "Right 3" $ (show (readExpr "(- (+ 4 6 3) 3 5 2)" >>= eval))
     ]
+
+-- TODO: add testing for error checking
 
 parseTests :: TestTree
 parseTests = testGroup "Parse Tests" [testCharacters, testStrings, testSymbols, testShow]

@@ -28,7 +28,8 @@ library
     build-depends:    
       base >=4.14.3.0, 
       parsec, 
-      megaparsec
+      megaparsec,
+      mtl
     exposed-modules:
       Scheme.Parser.ParseAtom
       Scheme.Parser.ParseString
@@ -36,6 +37,7 @@ library
       Scheme.Parser.ParseExpr
       Scheme.Parser.LispVal
       Scheme.Evaluator
+      Scheme.LispError
 
     default-language: Haskell2010
 
@@ -48,7 +50,7 @@ executable scheme
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base >=4.14.3.0, parsec, megaparsec, Scheme
+    build-depends:    base >=4.14.3.0, parsec, megaparsec, Scheme, mtl
     hs-source-dirs:   app
     default-language: Haskell2010
 
