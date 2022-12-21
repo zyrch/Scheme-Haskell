@@ -38,6 +38,8 @@ library
       Scheme.Parser.LispVal
       Scheme.Evaluator
       Scheme.LispError
+      Scheme.Primitives.Binops
+      Scheme.Primitives.List
 
     default-language: Haskell2010
 
