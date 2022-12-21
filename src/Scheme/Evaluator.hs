@@ -17,7 +17,8 @@ eval (List [Atom "if", pred, conseq, alt]) =
      do result <- eval pred
         case result of
              Bool False -> eval alt
-             otherwise  -> eval conseq
+             Bool True  -> eval conseq
+             otherwise  -> throwError $ TypeMismatch "predicate should be Bool" result
 
 eval (List (Atom func : args)) = (mapM eval args) >>= apply func
 eval val = throwError $ TypeMismatch "Type not found" val
