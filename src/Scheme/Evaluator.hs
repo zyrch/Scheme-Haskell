@@ -22,7 +22,7 @@ eval (List [Atom "if", pred, conseq, alt]) =
              True  -> eval conseq
 
 eval (List (Atom func : args)) = (mapM eval args) >>= apply func
-eval val = throwError $ TypeMismatch "Type not found" val
+eval badForm = throwError $ BadSpecialForm "Unrecognized special form" badForm
 
 evalPred :: LispVal -> ThrowsError Bool
 evalPred pred =

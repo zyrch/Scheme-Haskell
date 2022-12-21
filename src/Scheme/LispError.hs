@@ -45,3 +45,5 @@ showVal (DottedList head tail) = "( " ++ unwordsList head ++ " . " ++ showVal ta
 
 extractValue :: ThrowsError a -> a
 extractValue (Right val) = val
+
+trapError action = catchError action (return . show)
