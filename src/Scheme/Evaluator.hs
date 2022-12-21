@@ -13,15 +13,33 @@ eval val@(Number _) = return val
 eval val@(Bool _) = return val
 eval (List [Atom "quote", val]) = return val
 
+-- TODO: Add cond and case expressions
+
 eval (List [Atom "if", pred, conseq, alt]) = 
-     do result <- eval pred
+     do result <- evalPred pred
         case result of
-             Bool False -> eval alt
-             Bool True  -> eval conseq
-             otherwise  -> throwError $ TypeMismatch "predicate should be Bool" result
+             False -> eval alt
+             True  -> eval conseq
 
 eval (List (Atom func : args)) = (mapM eval args) >>= apply func
 eval val = throwError $ TypeMismatch "Type not found" val
+
+evalPred :: LispVal -> ThrowsError Bool
+evalPred pred =
+     do result <- eval pred
+        case result of
+            Bool False -> return $ False
+            Bool True  -> return $ True
+            otherwise  -> throwError $ TypeMismatch "predicate should be Bool" result
+
+evalClause :: LispVal -> Maybe (ThrowsError LispVal)
+evalClause (List [pred, conseq]) =
+        case evalPred pred of
+            Left  err   -> Just (Left err)
+            Right True  -> Just (eval conseq)
+            Right False -> Nothing
+
+-- ThrowsError Bool
 
 apply :: String -> [LispVal] -> ThrowsError LispVal
 apply func args = maybe (throwError $ NotFunction "Unrecognized primitive args" func ) ($ args) (lookup func primitives)
