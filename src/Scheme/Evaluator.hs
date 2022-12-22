@@ -6,40 +6,40 @@ import Control.Monad.Except
 
 import Scheme.Primitives.Binops
 import Scheme.Primitives.List
+import Scheme.Primitives.List
 
-eval :: LispVal -> ThrowsError LispVal
-eval val@(String _) = return val
-eval val@(Number _) = return val
-eval val@(Bool _) = return val
-eval (List [Atom "quote", val]) = return val
+import Scheme.State
+
+eval :: Env -> LispVal -> IOThrowsError LispVal
+eval env val@(String _)                                       = return val
+eval env val@(Number _)                                       = return val
+eval env val@(Bool _)                                         = return val
+eval env (Atom id)                                            = getVar env id
+eval env (List [Atom "quote", val])                           = return val
 
 -- TODO: Add cond and case expressions
 
-eval (List [Atom "if", pred, conseq, alt]) = 
-     do result <- evalPred pred
+eval env (List [Atom "if", pred, conseq, alt])                = 
+     do result <- evalPred env pred
         case result of
-             False -> eval alt
-             True  -> eval conseq
+             False -> eval env alt
+             True  -> eval env conseq
 
-eval (List (Atom func : args)) = (mapM eval args) >>= apply func
-eval badForm = throwError $ BadSpecialForm "Unrecognized special form" badForm
 
-evalPred :: LispVal -> ThrowsError Bool
-evalPred pred =
-     do result <- eval pred
+eval env (List [Atom "define", Atom varName, varExpr])       = eval env varExpr >>= defineVar env varName
+eval env (List [Atom "set!", Atom varName, varExpr])         = eval env varExpr >>= setVar env varName
+
+eval env (List (Atom func : args))                            = (mapM (eval env) args) >>= liftThrowsError . apply func
+
+eval env badForm                                              = throwError $ BadSpecialForm "Unrecognized special form" badForm
+
+evalPred :: Env -> LispVal -> IOThrowsError Bool
+evalPred env pred =
+     do result <- eval env pred
         case result of
             Bool False -> return $ False
             Bool True  -> return $ True
             otherwise  -> throwError $ TypeMismatch "predicate should be Bool" result
-
-evalClause :: LispVal -> Maybe (ThrowsError LispVal)
-evalClause (List [pred, conseq]) =
-        case evalPred pred of
-            Left  err   -> Just (Left err)
-            Right True  -> Just (eval conseq)
-            Right False -> Nothing
-
--- ThrowsError Bool
 
 apply :: String -> [LispVal] -> ThrowsError LispVal
 apply func args = maybe (throwError $ NotFunction "Unrecognized primitive args" func ) ($ args) (lookup func primitives)
